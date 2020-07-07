@@ -1,0 +1,788 @@
+﻿@model DateTime
+@{
+    Layout = null;
+    ViewBag.Title = "Employees Informations";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Rasta Home Task - @Title</title>
+    <link href="~/Content/FontAwesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="~/Content/FontIcon/css/animation.css" rel="stylesheet" />
+    <link href="~/Content/FontIcon/css/fontello.css" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="~/Content/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="~/Content/Site.css" />
+
+    <script type="text/javascript" src="~/Scripts/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="~/Scripts/DataService.js"></script>
+    <style>
+        @@font-face {
+            font-family: 'fontello';
+            src: url('/Content/FontIcon/font/fontello.eot?74338943');
+            src: url('/Content/FontIcon/font/fontello.eot?74338943#iefix') format('embedded-opentype'), url('/Content/FontIcon/font/fontello.woff?74338943') format('woff'), url('/Content/FontIcon/font/fontello.ttf?74338943') format('truetype'), url('/Content/FontIcon/font/fontello.svg?74338943#fontello') format('svg');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+
+        .demo-icon {
+            font-family: "fontello";
+            font-style: normal;
+            font-weight: normal;
+            speak: never;
+            display: inline-block;
+            text-decoration: inherit;
+            width: 1em;
+            margin-right: .2em;
+            text-align: center;
+            /* opacity: .8; */
+            /* For safety - reset parent styles, that can break glyph codes*/
+            font-variant: normal;
+            text-transform: none;
+            /* fix buttons height, for twitter bootstrap */
+            line-height: 1em;
+            /* Animation center compensation - margins should be symmetric */
+            /* remove if not needed */
+            margin-left: .2em;
+            /* You can be more comfortable with increased icons size */
+            /* font-size: 120%; */
+            /* Font smoothing. That was taken from TWBS */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            /* Uncomment for 3D effect */
+            /* text-shadow: 1px 1px 1px rgba(127, 127, 127, 0.3); */
+        }
+    </style>
+
+    @* #region grid style *@
+    <style>
+        .btn-selected-item {
+            border: none;
+            color: #000;
+            background-color: transparent;
+            text-decoration: underline;
+            outline: 0 !important;
+            padding: 0;
+        }
+
+            .btn-selected-item[disabled=disabled] {
+                color: #777 !important;
+                text-decoration: none !important;
+                background-color: transparent;
+            }
+
+        .btn-delete {
+            padding: 0px 5px;
+        }
+
+        .checkbox input[type=checkbox] {
+            display: none;
+        }
+
+        .radio, .checkbox {
+            position: relative;
+        }
+
+            .checkbox label:before {
+                content: '';
+                position: absolute;
+                width: 16px;
+                height: 16px;
+                top: 3px;
+                left: 0;
+                background-color: transparent;
+                border: 1px solid #000;
+            }
+
+            .checkbox input[type=checkbox]:checked + label:before {
+                content: '';
+                position: absolute;
+                width: 16px;
+                height: 16px;
+                background-color: white;
+                top: 3px;
+                left: 0;
+                background-color: transparent;
+                border: 1px solid transparent;
+            }
+
+            .checkbox input[type=checkbox]:checked + label:after {
+                content: '\e800';
+                position: absolute;
+                left: 1px;
+                top: 1px;
+                font-family: fontello;
+                width: 16px;
+                height: 16px;
+                color: #000000;
+            }
+
+
+        .j-table > thead {
+            /*position:relative;*/
+            display: block;
+            width: 100%;
+        }
+
+            .j-table > thead > tr > td {
+            }
+
+        .j-table table > thead > tr.filter-row > td {
+        }
+
+        .j-table table > thead > .filter-row > td {
+        }
+
+        .j-table > thead > tr.filter-row > td {
+            background-color: #1f1f1f;
+            border: none;
+            border-bottom: 1px solid #000;
+        }
+
+        .j-table .input-search {
+            box-shadow: unset;
+            border-radius: 0;
+            background-color: #2d2d2d;
+            /* border: none; */
+            border: 1px solid #ffffff47;
+            color: #d8b13a;
+        }
+
+            .j-table .input-search:focus {
+                border-color: #000000;
+                box-shadow: unset;
+            }
+
+        .j-table > thead > tr.headers > td {
+            background-color: #d8b13a;
+            color: #000;
+            font-weight: bold;
+            vertical-align: middle;
+            border-bottom: 1px solid #000;
+            padding: 0px 8px;
+        }
+
+        .j-table > tbody {
+            height: 600px;
+            width: 100%;
+            display: block;
+            background-color: #ffffff;
+            overflow: auto;
+        }
+
+            .j-table > tbody > tr > td {
+                background-color: #adadad38;
+                border-top: none;
+            }
+
+        .j-table.table-striped > tbody > tr:nth-child(odd) > td, .j-table.table-striped > tbody > tr:nth-child(odd) > th {
+            background-color: #fff;
+        }
+
+        .j-table > tfoot > tr > td {
+            border-top: 1px solid #000;
+            padding: 0;
+        }
+
+        .j-table.table thead > tr > th,
+        .j-table.table tbody > tr > th,
+        .j-table.table tfoot > tr > th,
+        .j-atble.table thead > tr > td,
+        .j-table.table tbody > tr > td,
+        .j-table.table tfoot > tr > td {
+            vertical-align: middle;
+            padding: 0px 8px;
+        }
+
+        .j-table.table tfoot > tr > td {
+            padding: 0px 0px;
+        }
+
+        .table-hover > tbody > tr:hover > td, .table-hover > tbody > tr:hover > th {
+            background-color: #d8b13a52;
+        }
+
+        .j-table .pagination {
+            margin: 5px;
+        }
+
+            .j-table .pagination > li > a, .pagination > li > span {
+                border-color: #000;
+                color: #000;
+            }
+
+            .j-table .pagination > li:first-child > a, .pagination > li:first-child > span {
+                border-radius: 0;
+                border-color: #000;
+                color: #000;
+            }
+
+            .j-table .pagination > li:last-child > a, .pagination > li:last-child > span {
+                border-radius: 0;
+                border-color: #000;
+                color: #000;
+                background-color: #ffff;
+            }
+
+            .j-table .pagination > li > a.active, .j-table .pagination > li > span.active {
+                background-color: #d8b13a;
+            }
+
+        .j-table .selected-item-count {
+            background-color: #e8d9ab;
+            padding: 8px;
+            border: 1px solid #000;
+            border-top: unset;
+        }
+
+        .j-table .count-info {
+            background-color: #e8d9ab;
+            padding: 8px;
+            border: 1px solid #000;
+            border-top: unset;
+            border-left: 0px;
+            font-weight: bold;
+        }
+    </style>
+    @* #endregion *@
+</head>
+<body>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav"></ul>
+            </div>
+        </div>
+    </div>
+
+    <div class=" body-content">
+        <h2>Employees Informations</h2>
+        <div id="userTable">
+
+        </div>
+
+
+    </div>
+
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            var jOptions = {
+                dataSource: {
+                    read: function (options) {
+                        var filter = options.filter;
+                        $http.post("EmployeeInfo", "GetEmployeeInfos", filter).then(result => {
+                            options.success({
+                                data: result.Data,
+                                total: result.TotalCount,
+                            });
+                        });
+
+                    },
+                    schema: {
+                        key: "ID",
+                    },
+                    pageSize: 25,
+                    serverFiltering: true,
+                },
+                checkbox: true,
+                filterable: true,
+                columns: [
+                    {
+                        field: "ID",
+                        title: "ID",
+                        width: 70
+                    },
+                    {
+                        field: "PersonalCode",
+                        title: "Personal Code",
+                        width: 150
+                    },
+                    {
+                        field: "FirstName",
+                        title: "Name",
+                        width: 150
+                    },
+                    {
+                        field: "LastName",
+                        title: "Surename",
+                        width: 150
+                    },
+                    {
+                        field: "Email",
+                        title: "E-Mail",
+                        width: 200
+                    },
+                    {
+                        field: "PhoneNumber",
+                        title: "Phone No",
+                        width: 100
+                    },
+                    {
+                        field: "City",
+                        title: "City",
+                        width: 150
+                    },
+                    {
+                        field: "Company",
+                        title: "Company",
+                        width: 200
+                    },
+                ]
+            }
+
+            $('#userTable').jDataTable(jOptions);
+        });
+
+        jQuery.fn.extend({
+            jDataTable: function (jOptions) {
+                //#region DOMElement
+                var htmlTable = $("<table class='table table-striped table-responsive table-hover j-table'></table>");
+                var selectedTable = $("<table id='selected-table' class='table table-responsive table-bordered table-striped table-hover'></table>");
+                var selectedModal = $('<div class="modal fade" id="selectedModal" role="dialog"><div class="modal-dialog modal-lg"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title">Selected Employee</h4></div><div class="modal-body" style="height:500px;overflow:auto"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div >');
+                //#endregion
+
+                //#region intital variables
+                let that = $(this);
+                let selectedList = [];
+                let columns = [];
+                let dataSource = {}
+                let keyField = null;
+                let fields = []
+                let widths = [];
+                let widthsAsPercent = [];
+                let hasCheckBox = false;
+                let filterable = false;
+                let paginationInfo = {}
+                let filters = {};
+                let options = {};
+                let checkBoxColumnWidth = 10;
+                let checkBoxColumnWidthAsPercent = 0;
+                //#region functions
+                function init() {
+
+                    columns = jOptions.columns || []
+                    dataSource = jOptions.dataSource || {};
+                    fields = columns.map(item => item.field);
+                    widths = columns.map(item => item.width);
+                    var sumWidth = 0;
+                    sumWidth += parseInt(widths.map(w => w));
+                    for (var i = 0; i < widths.length; i++) {
+                        sumWidth += widths[i];
+                    }
+                    if (hasCheckBox) {
+                        sumWidth += checkBoxColumnWidth;
+                    }
+                    //sumWidth += parseInt(widths.map(w => w));
+                    widthsAsPercent = widths.map(item => (100 / sumWidth) * item);
+                    checkBoxColumnWidthAsPercent = (100 / sumWidth) * checkBoxColumnWidth;
+                    keyField = dataSource["schema"] && dataSource.schema.key;
+                    hasCheckBox = jOptions.checkbox ? jOptions.checkbox : false;
+                    filterable = jOptions.filterable ? jOptions.filterable : false;
+                    paginationInfo = {
+                        pageSize: dataSource.pageSize || 10,
+                        count: 0,
+                        total: 0,
+                        skip: 0,
+                        pageNumber: 1,
+                        take: dataSource.pageSize || 10,
+                    }
+                    if (!dataSource) throw Error("option must has datasource");
+                    if (!dataSource["read"] || !dataSource.read) throw Error("datasource has read function");
+                    else {
+                        if (!dataSource.read instanceof Function) throw Error("read must be function")
+                    }
+
+                    for (var i = 0; i < fields.length; i++) {
+                        var field = fields[i];
+                        filters[field] = "";
+                    }
+
+                    //#region grid options
+                    options = {
+                        success: function (response) {
+                            var result = {
+                                data: response.data || [],
+                                total: response["total"] && response.total ? response.total : 0,
+                                count: response.data && response.data instanceof Array ? response.data.length : 0,
+                            }
+                            if (dataSource.schema && dataSource.schema["data"] && dataSource.schema.data instanceof Function) {
+                                result.data = dataSource.schema.data(result);
+                            }
+                            if (dataSource.schema && dataSource.schema["data"] && dataSource.schema.data instanceof Function) {
+                                result.count = dataSource.schema.total(result);
+                            }
+                            paginationInfo.count = result.count;
+                            paginationInfo.total = result.total;
+                            dataSource.data = result.data;
+                            generateHeaders(dataSource.data);
+                            generateBody(dataSource.data);
+                            generateFooter(dataSource.data, result.total);
+                        },
+                        filter: {
+                            filters: filters,
+                            pageSize: paginationInfo.pageSize,
+                            skip: paginationInfo.skip,
+                            take: paginationInfo.pageSize,
+                        }
+                    }
+                    //#endregion
+
+                    renderDOM();
+
+                    attachEvents();
+
+                    dataSource.read(options);
+                }
+                function updateTable() {
+                    var uncheckedSelectedAllCheckbox = false;
+                    $(that).find("table").find("tbody").find("tr").each(function () {
+                        var key = $(this).data("id");
+                        if (!selectedList.filter(selectedItem => selectedItem[keyField] == key)[0]) {
+                            $(this).find("#chk-" + key).prop("checked", false);
+                            uncheckedSelectedAllCheckbox = true;
+                        }
+                    });
+                    if (uncheckedSelectedAllCheckbox) {
+                        $(that).find("#chk-selectAll").prop("checked", false);
+                    }
+                    var selectedCount = selectedList.length ? selectedList.length : paginationInfo.total;
+
+                    $("#selected-count").text(selectedCount);
+                    if (!selectedList.length) {
+                        $(".btn-selected-item").attr("disabled", "disabled");
+                    }
+                    else {
+                        $(".btn-selected-item").removeAttr("disabled");
+                    }
+                }
+                function generateSelectedItemTable(table, data) {
+                    var htmlHead = $("<thead></thead>");
+                    var htmlRow = $("<tr></tr>");
+                    var htmlCol = $("<td></td>");
+                    $(htmlCol).css("width", "50px");
+                    var deleteCommand = $("<button type='button'  class='btn btn-danger btn-delete' id='delete-all'>x</button>");
+                    $(htmlCol).append(deleteCommand);
+                    $(htmlRow).append(htmlCol);
+                    for (let index = 0; index < columns.length; index++) {
+                        const col = columns[index];
+                        var width = col["width"];
+                        var htmlCol = $("<td></td>");
+                        if (width) {
+                            $(htmlCol).css("width", width);
+                        }
+                        var title = col["title"];
+                        if (title) {
+                            $(htmlCol).text(title);
+                        }
+
+                        $(htmlRow).append(htmlCol);
+                    }
+                    $(htmlHead).append(htmlRow);
+                    $(table).append(htmlHead);
+
+                    var htmlBody = $("<tbody></tbody>");
+                    for (let i = 0; i < data.length; i++) {
+                        const item = data[i];
+                        var isSelected = selectedList.filter(selectedItem => selectedItem[keyField] == item[keyField])[0] ? true : false;
+                        var keyValue = item[keyField];
+                        var htmlRow = $("<tr data-id='" + keyValue + "'></tr>");
+                        var htmlCol = $("<td></td>");
+                        var deleteCommand = $("<button type='button'  class='btn btn-danger btn-delete' id='" + keyValue + "'>x</button>");
+                        $(htmlCol).append(deleteCommand);
+                        $(htmlRow).append(htmlCol);
+
+                        for (let j = 0; j < fields.length; j++) {
+                            var field = fields[j];
+                            var htmlCol = $("<td></td>");
+                            $(htmlCol).text(item[field]);
+                            $(htmlRow).append(htmlCol);
+                        }
+                        $(htmlBody).append(htmlRow);
+                    }
+                    $(table).append(htmlBody);
+
+                }
+                function generateHeaders(data) {
+                    $(that).find("table").find("thead").remove();
+                    var htmlHead = $("<thead class='j-thead'></thead>");
+                    var htmlRow = $("<tr class='filter-row'></tr>");
+                    if (filterable) {
+                        if (hasCheckBox) {
+                            var htmlCol = $("<td class='text-center'></td>");
+                            $(htmlCol).css("width", checkBoxColumnWidthAsPercent + "%");
+                            $(htmlRow).append(htmlCol);
+                        }
+                        for (let index = 0; index < columns.length; index++) {
+                            const col = columns[index];
+                            //var width = col["width"];
+                            var htmlCol = $("<td class='text-center'></td>");
+                            $(htmlCol).css("width", widthsAsPercent[index] + "%");
+                            var currentField = col["field"];
+                            var inputSearch = $("<input type='text' value='" + options.filter.filters[currentField] + "' class='form-control input-search'  id='search-" + currentField + "' />");
+                            htmlCol.append(inputSearch);
+                            $(htmlRow).append(htmlCol);
+                        }
+                        $(htmlHead).append(htmlRow);
+                    }
+                    htmlRow = $("<tr class='headers'></tr>");
+                    if (hasCheckBox) {
+                        var htmlCol = $("<td class='text-center'></td>");
+                        $(htmlCol).css("width", checkBoxColumnWidthAsPercent + "%");
+                        var checkboxContainer = $("<div class='checkbox'></div>");
+                        var checkbox = $("<input type='checkbox' id='chk-selectAll' />");
+                        if (data) {
+
+                            if (isAllItemSelected(data)) {
+                                $(checkbox).prop("checked", true);
+                            }
+                            else {
+                                $(checkbox).prop("checked", false);
+                            }
+                        }
+                        var label = $("<label for='chk-selectAll'></label>");
+                        $(checkboxContainer).append(checkbox);
+                        $(checkboxContainer).append(label);
+                        $(htmlCol).append(checkboxContainer);
+                        $(htmlRow).append(htmlCol);
+
+                    }
+                    for (let index = 0; index < columns.length; index++) {
+                        const col = columns[index];
+                        var htmlCol = $("<td class='text-center'></td>");
+                        $(htmlCol).css("width", widthsAsPercent[index] + "%");
+                        var title = col["title"];
+                        if (title) {
+                            $(htmlCol).text(title);
+                        }
+
+                        $(htmlRow).append(htmlCol);
+                    }
+                    $(htmlHead).append(htmlRow);
+                    $(that).find("table").append(htmlHead);
+                }
+                function generateBody(data) {
+                    $(that).find("table").find("tbody").remove();
+                    var htmlBody = $("<tbody></tbody>");
+                    //$(that).find("table").append(htmlBody);
+                    for (let i = 0; i < data.length; i++) {
+                        const item = data[i];
+                        var isSelected = selectedList.filter(selectedItem => selectedItem[keyField] == item[keyField])[0] ? true : false;
+                        var keyValue = item[keyField];
+                        var htmlRow = $("<tr data-id='" + keyValue + "'></tr>");
+                        if (hasCheckBox) {
+                            var htmlCol = $("<td></td>");
+                            $(htmlCol).css("width", checkBoxColumnWidthAsPercent + "%");
+                            var checkboxContainer = $("<div class='checkbox'></div>");
+                            var checkbox = $("<input type='checkbox' id='chk-" + keyValue + "' />");
+                            checkbox.prop("checked", isSelected);
+                            var label = $("<label for='chk-" + keyValue + "'></label>");
+                            $(checkboxContainer).append(checkbox);
+                            $(checkboxContainer).append(label);
+                            $(htmlCol).append(checkboxContainer);
+                            $(htmlRow).append(htmlCol);
+                        }
+                        for (let j = 0; j < fields.length; j++) {
+                            var field = fields[j];
+                            var width = widths[j];
+                            var htmlCol = $("<td class='text-center'></td>");
+                            var headerWidth = width;
+
+                            $(htmlCol).css("width", widthsAsPercent[j] + "%");
+
+                            $(htmlCol).text(item[field]);
+                            $(htmlRow).append(htmlCol);
+                        }
+                        $(htmlBody).append(htmlRow);
+                    }
+                    $(that).find("table").append(htmlBody);
+                }
+                function generateFooter(data, totalCount) {
+                    $(that).find("table").find("tfoot").remove();
+                    var htmlFooter = $("<tfoot></tfoot>");
+                    var htmlRow = $("<tr></tr>");
+                    var htmlCol = $("<td colSpan=" + (columns.length + 1) + "></td>");
+
+                    var pageCount = 0;
+                    if (parseInt(paginationInfo.total % paginationInfo.pageSize) != 0) {
+                        pageCount = parseInt(paginationInfo.total / paginationInfo.pageSize) + 1;
+                    }
+                    else {
+                        pageCount = parseInt(paginationInfo.total / paginationInfo.pageSize);
+                    }
+                    var paginationContainer = $("<div class='col-xs-6'></div>");
+                    var pageInfoContainer = $("<div class='col-xs-3 text-right count-info'></div>");
+                    var selectedItemContainer = $("<div class='col-xs-3 text-center selected-item-count'></div>");
+                    var ul = $("<ul class='pagination'></ul>");
+                    for (var i = 0; i < pageCount; i++) {
+                        if ((i + 1) == paginationInfo.pageNumber) {
+                            $(ul).append("<li><a class='active' data-page='" + (i + 1) + "'>" + parseInt(i + 1) + "</a></li>")
+                        }
+                        else {
+                            $(ul).append("<li><a data-page='" + (i + 1) + "'>" + parseInt(i + 1) + "</a></li>")
+                        }
+
+                    }
+                    $(paginationContainer).append(ul);
+                    $(htmlCol).append(paginationContainer);
+
+                    var selectedInfo = $("<button class='btn-selected-item' data-toggle='modal' data-target='#selectedModal'><span><b>Selected : </b><span id='selected-count'> " + (selectedList.length ? selectedList.length : paginationInfo.total) + "</span></span></button>");
+                    if (!selectedList.length) selectedInfo.attr("disabled", "disabled");
+                    $(selectedItemContainer).append(selectedInfo);
+                    $(htmlCol).append(selectedItemContainer);
+
+                    var pageInfo = $("<span>" + (paginationInfo.skip + 1) + "</span>-<span>" + (paginationInfo.count + paginationInfo.skip) + "</span> of <span>" + paginationInfo.total + "</span>");
+                    $(pageInfoContainer).append(pageInfo);
+                    $(htmlCol).append(pageInfoContainer);
+                    $(htmlRow).append(htmlCol);
+                    $(htmlFooter).append(htmlRow);
+                    $(htmlTable).append(htmlFooter);
+                }
+                function isAllItemSelected(data) {
+                    var selectedCount = 0;
+                    for (var i = 0; i < data.length; i++) {
+                        var item = data[i];
+                        if (selectedList.filter(selectedItem => selectedItem[keyField] == item[keyField])[0]) {
+                            selectedCount++;
+                        }
+                    }
+                    return selectedCount == paginationInfo.count ? true : false;
+                }
+                function renderDOM() {
+                    $(that).append(htmlTable);
+                    $(that).append(selectedModal);
+
+                    var htmlHead = generateHeaders();
+                    $(htmlTable).append(htmlHead);
+                }
+                //#endregion
+                function attachEvents() {
+                    $(document).delegate("[type='checkbox']", "change", function (e) {
+                        if (this.id == "chk-selectAll") {
+                            if (this.checked) {
+                                $("[type='checkbox']").each(function () {
+                                    $(this).prop("checked", true);
+                                });
+                                for (var i = 0; i < dataSource.data.length; i++) {
+                                    var item = dataSource.data[i];
+                                    if (!selectedList.filter(selectedItem => selectedItem[keyField] == item[keyField])[0]) {
+                                        selectedList.push(item);
+                                    }
+                                }
+                            }
+                            else {
+                                $("[type='checkbox']").each(function () {
+                                    $(this).prop("checked", false);
+                                });
+                                for (var i = 0; i < dataSource.data.length; i++) {
+                                    var item = dataSource.data[i];
+                                    for (var j = 0; j < selectedList.length; j++) {
+                                        var selectedItem = selectedList[j];
+                                        if (selectedItem[keyField] == item[keyField]) {
+                                            selectedList.splice(j, 1);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else {
+                            var key = this.id.substr(4);
+                            if (selectedList.filter(item => item[keyField] == key)[0]) {
+                                $(this).prop("checked", false);
+                                selectedList = selectedList.filter(item => item[keyField] != key);
+                            }
+                            else {
+                                var item = dataSource.data.filter(item => item[keyField] == key)[0];
+                                if (item) {
+                                    $(this).prop("checked", true);
+                                    selectedList.push(item);
+                                }
+                            }
+                            if (isAllItemSelected(dataSource.data)) {
+                                $("#chk-selectAll").prop("checked", true);
+                            }
+                            else {
+                                $("#chk-selectAll").prop("checked", false);
+                            }
+                        }
+
+                        var selectedCount = selectedList.length ? selectedList.length : paginationInfo.total;
+
+                        $("#selected-count").text(selectedCount);
+                        if (!selectedList.length) {
+                            $(".btn-selected-item").attr("disabled", "disabled");
+                        }
+                        else {
+                            $(".btn-selected-item").removeAttr("disabled");
+                        }
+                    })
+                    $(document).delegate(".pagination > li > a", "click", function () {
+                        paginationInfo.pageNumber = $(this).data("page");
+                        paginationInfo.skip = (paginationInfo.pageSize * (paginationInfo.pageNumber - 1));
+                        options.filter.skip = paginationInfo.skip;
+                        $('.pagination > li > a').removeClass(".active");
+                        //$(this).addClass("active");
+                        dataSource.read(options);
+                    });
+                    $(document).delegate(".btn-delete", "click", function () {
+                        if (this.id == "delete-all") {
+                            $("#selected-table").find("tbody").find("tr").each(function () {
+                                $(this).remove();
+                            });
+                            selectedList = [];
+                        }
+                        else {
+                            var key = this.id;
+                            $("#selected-table").find("tbody").find("tr").each(function () {
+                                var currentKey = $(this).data("id");
+                                if (key == currentKey) {
+                                    $(this.remove());
+                                }
+                            });
+                            selectedList = selectedList.filter(item => item[keyField] != key);
+                        }
+                        updateTable();
+                    });
+                    $(document).delegate(".input-search", "change", function () {
+                        var field = this.id.substr(7);
+                        var value = $(this).val();
+                        options.filter.filters[field] = value;
+
+                        dataSource.read(options)
+                    });
+                    $("#selectedModal").on('shown.bs.modal', function () {
+                        //$(that).find("#selectedModal").find(".modal-body").html("");
+                        //$(that).find("#selectedModal").find(".modal-body").append(selectedTable.clone());
+                        //selectedTableTemp = $(that).find("#selectedModal").find(".modal-body").find("#selected-table");
+                        selectedList.sort(function (a, b) {
+                            return a[keyField] - b[keyField]
+                        })
+                        var selectedTableTemp = selectedTable.clone();
+                        generateSelectedItemTable(selectedTableTemp, selectedList);
+                        $(that).find("#selectedModal").find(".modal-body").html("");
+                        $(that).find("#selectedModal").find(".modal-body").append(selectedTableTemp);
+
+                    });
+                }
+                //#region events
+
+                //#endregion
+
+                init();
+            }
+        })
+    </script>
+</body>
+</html>
+    
